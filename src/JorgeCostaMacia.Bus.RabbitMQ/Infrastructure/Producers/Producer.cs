@@ -130,7 +130,7 @@ internal sealed class Producer : Domain.IProducer, IAsyncDisposable
         using (BusLogger.ProducerContext(exchange, routingKey, body, headers))
         using (BusLogger.DescriptionContext(BusLoggerDescriptions.SendFaulted))
         {
-            _logger.LogError(exception, "Producer failed.");
+            _logger.LogError(exception, "ProducerFailed");
         }
     }
 

@@ -46,7 +46,7 @@ public sealed class RabbitLoggerTests
 
         (LogLevel Level, string Message) entry = Assert.Single(logger.Logged);
         Assert.Equal(LogLevel.Information, entry.Level);
-        Assert.Equal("Connection recovered.", entry.Message);
+        Assert.Equal("ConnectionRecovered", entry.Message);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public sealed class RabbitLoggerTests
 
         (LogLevel Level, string Message) entry = Assert.Single(logger.Logged);
         Assert.Equal(LogLevel.Warning, entry.Level);
-        Assert.Equal("Connection recovery failed.", entry.Message);
+        Assert.Equal("ConnectionRecoveryFailed", entry.Message);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public sealed class RabbitLoggerTests
 
         (LogLevel Level, string Message) entry = Assert.Single(logger.Logged);
         Assert.Equal(LogLevel.Error, entry.Level);
-        Assert.Equal("Client callback failed.", entry.Message);
+        Assert.Equal("ClientCallbackFailed", entry.Message);
     }
 
     // the category is public API in practice: it is what an operator puts in appsettings to silence the

@@ -101,7 +101,7 @@ public sealed class CommandFaultHandlerTests
     {
         // a deploy cancels the token while the fault is being parked. The outcome matches a broker
         // failure — Unhandled, so the delivery is redelivered rather than acked away — but it must get
-        // there silently: the generic catch logs "Parking failed." at Error, and a routine shutdown
+        // there silently: the generic catch logs "ParkingFailed" at Error, and a routine shutdown
         // must not look like a parking outage.
         RecordingLogger<CommandFaultHandlerTests> logger = new RecordingLogger<CommandFaultHandlerTests>();
         _producer.Failure = new OperationCanceledException();

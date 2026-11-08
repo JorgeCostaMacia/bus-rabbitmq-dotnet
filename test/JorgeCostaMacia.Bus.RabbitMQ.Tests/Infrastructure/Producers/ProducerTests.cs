@@ -141,7 +141,7 @@ public sealed class ProducerTests
 
         (LogLevel level, string message) = Assert.Single(_logger.Logged);
         Assert.Equal(LogLevel.Error, level);
-        Assert.Equal("Producer failed.", message);
+        Assert.Equal("ProducerFailed", message);
     }
 
     [Fact]

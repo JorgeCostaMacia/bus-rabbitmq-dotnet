@@ -44,7 +44,7 @@ internal static class RabbitLogger
     /// <summary>Logs a successful automatic recovery — the connection (and its topology) is back after a
     /// drop.</summary>
     /// <param name="logger">The logger.</param>
-    public static void LogRecovered(ILogger logger) => logger.LogInformation("Connection recovered.");
+    public static void LogRecovered(ILogger logger) => logger.LogInformation("ConnectionRecovered");
 
     /// <summary>Logs a failed automatic-recovery attempt — the client keeps retrying on its own.</summary>
     /// <param name="logger">The logger.</param>
@@ -52,7 +52,7 @@ internal static class RabbitLogger
     public static void LogRecoveryError(
         ILogger logger,
         Exception exception
-    ) => logger.LogWarning(exception, "Connection recovery failed.");
+    ) => logger.LogWarning(exception, "ConnectionRecoveryFailed");
 
     /// <summary>Logs an exception thrown by a client callback — a bug in a handler the client invoked, swallowed by the
     /// client otherwise.</summary>
@@ -61,5 +61,5 @@ internal static class RabbitLogger
     public static void LogCallbackException(
         ILogger logger,
         Exception exception
-    ) => logger.LogError(exception, "Client callback failed.");
+    ) => logger.LogError(exception, "ClientCallbackFailed");
 }
