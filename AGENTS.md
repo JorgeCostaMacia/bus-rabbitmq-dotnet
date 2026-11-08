@@ -74,7 +74,7 @@ A skill listed here but missing on this machine is one command away: `claude plu
 - **`dotnet-test`** / **`dotnet-test-migration`** — tests; the xUnit v4 / MTP v2 setup.
 - **`dotnet-upgrade`** — target-framework migrations.
 
-Not relevant to this repo (skip): `bus-kafka-net` (the Kafka decisions are bus-kafka-dotnet's), `validation-net`, `ddd-net`, `efcore-net` (no FluentValidation, value objects or EF here — messages are primitive DTO contracts; boundary validation is the consuming app's job), `clean-architecture-net`, `github-actions` / `github-actions-net` (the company's CI; this repo's runs on github-workflows), `dotnet-aspnetcore` (that's http-net), `dotnet-ai`, `dotnet-maui`, `dotnet-blazor`, `dotnet-data`, `dotnet-template-engine`, `dotnet11`, `dotnet-diag`, `dotnet-advanced`.
+Not relevant to this repo (skip): `bus-kafka-net` (the Kafka decisions are bus-kafka-dotnet's), `validation-net`, `ddd-net`, `efcore-net` (no FluentValidation, value objects or EF here — messages are primitive DTO contracts; boundary validation is the consuming app's job), `clean-architecture-net`, `dotnet-aspnetcore` (that's http-net), `dotnet-ai`, `dotnet-maui`, `dotnet-blazor`, `dotnet-data`, `dotnet-template-engine`, `dotnet11`, `dotnet-diag`, `dotnet-advanced`.
 
 ## Build & test
 
