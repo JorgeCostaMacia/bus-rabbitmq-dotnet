@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Health check for JorgeCostaMacia.Bus.RabbitMQ — reports whether the bus's shared broker connection is open, for ASP.NET Core health endpoints (liveness/readiness). Separate package so the transport stays free of the HealthChecks dependency.</Description>
+		<PackageTags>bus,rabbitmq,healthchecks,messaging</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="JorgeCostaMacia.Bus.RabbitMQ.HealthChecks.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../JorgeCostaMacia.Bus.RabbitMQ/JorgeCostaMacia.Bus.RabbitMQ.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
+		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" />
+	</ItemGroup>
+
+</Project>

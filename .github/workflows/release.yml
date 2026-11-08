@@ -1,0 +1,14 @@
+# Release: the GitHub Release of each v* tag the GitFlow finish pushes. Main already published the packages.
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    uses: JorgeCostaMacia/github-workflows/.github/workflows/github-release.yml@v1
