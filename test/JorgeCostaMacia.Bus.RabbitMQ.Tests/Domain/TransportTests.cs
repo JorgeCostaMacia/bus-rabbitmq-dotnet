@@ -40,7 +40,7 @@ public sealed class TransportTests
     }
 
     [Fact]
-    public void GetGuid_CanonicalText_RoundTrips()
+    public void GetHeaderGuid_CanonicalText_RoundTrips()
     {
         Guid value = Guid.NewGuid();
 
@@ -48,15 +48,15 @@ public sealed class TransportTests
     }
 
     [Fact]
-    public void GetGuid_NonGuidText_Throws()
+    public void GetHeaderGuid_NonGuidText_Throws()
         => Assert.Throws<InvalidCastException>(() => CreateSut(("id", "not-a-guid"u8.ToArray())).GetHeaderGuid("id"));
 
     [Fact]
-    public void GetHeader_Missing_Throws()
+    public void GetHeaderString_AMissingKey_Throws()
         => Assert.Throws<KeyNotFoundException>(() => CreateSut().GetHeaderString("missing"));
 
     [Fact]
-    public void GetString_PresentButNullValue_Throws()
+    public void GetHeaderString_PresentButNullValue_Throws()
     {
         // a present key whose value is null is treated as absent — the `value is null` branch throws.
         Transport transport = new Transport(
@@ -70,7 +70,7 @@ public sealed class TransportTests
     }
 
     [Fact]
-    public void GetStringOrDefault_PresentButNullValue_ReturnsNull()
+    public void GetHeaderStringOrDefault_PresentButNullValue_ReturnsNull()
     {
         Transport transport = new Transport(
             new Dictionary<string, object?> { ["key"] = null },
@@ -83,7 +83,7 @@ public sealed class TransportTests
     }
 
     [Fact]
-    public void GetString_ForeignStringValue_ReadsItAsIs()
+    public void GetHeaderString_AForeignStringValue_ReadsItAsIs()
     {
         // an AMQP field table from a foreign publisher can carry a string instead of bytes.
         Transport transport = new Transport(
@@ -98,7 +98,7 @@ public sealed class TransportTests
     }
 
     [Fact]
-    public void GetString_ForeignIntValue_ReadsItsInvariantText()
+    public void GetHeaderString_AForeignIntValue_ReadsItsInvariantText()
     {
         // and a number: read through its invariant text, so the typed getters still work.
         Transport transport = new Transport(
@@ -113,7 +113,7 @@ public sealed class TransportTests
     }
 
     [Fact]
-    public void GetStringOrDefault_Absent_ReturnsNull()
+    public void GetHeaderStringOrDefault_AnAbsentKey_ReturnsNull()
     {
         Transport transport = CreateSut(("present", "value"u8.ToArray()));
 
@@ -122,7 +122,7 @@ public sealed class TransportTests
     }
 
     [Fact]
-    public void GetDateTime_RoundTripFormat_ParsesAsUtc()
+    public void GetHeaderDateTime_RoundTripFormat_ParsesAsUtc()
     {
         DateTime value = new DateTime(2026, 7, 3, 12, 30, 45, DateTimeKind.Utc);
 
@@ -133,25 +133,25 @@ public sealed class TransportTests
     }
 
     [Fact]
-    public void GetDateTime_Invalid_Throws()
+    public void GetHeaderDateTime_InvalidText_Throws()
         => Assert.Throws<InvalidCastException>(() => CreateSut(("at", "nope"u8.ToArray())).GetHeaderDateTime("at"));
 
     [Fact]
-    public void GetStringList_TrimsAndSkipsEmptyEntries()
+    public void GetHeaderStringList_ACommaSeparatedList_TrimsAndSkipsEmptyEntries()
         => Assert.Equal(
             new string[] { "a", "b", "c" },
             CreateSut(("list", " a, b ,,c "u8.ToArray())).GetHeaderStringList("list"));
 
     [Fact]
-    public void GetInt_Digits_Parses()
+    public void GetHeaderInt_Digits_ParsesThem()
         => Assert.Equal(7, CreateSut(("count", "7"u8.ToArray())).GetHeaderInt("count"));
 
     [Fact]
-    public void GetInt_Invalid_Throws()
+    public void GetHeaderInt_InvalidText_Throws()
         => Assert.Throws<InvalidCastException>(() => CreateSut(("count", "nope"u8.ToArray())).GetHeaderInt("count"));
 
     [Fact]
-    public void DecodeHeaders_RendersGuidsAsGuid_TextOtherwise_PreservingOrder()
+    public void DecodeHeaders_AGuidAndATextHeader_RendersBothAsText()
     {
         Guid id = Guid.NewGuid();
         Transport transport = CreateSut(
@@ -166,7 +166,7 @@ public sealed class TransportTests
     }
 
     [Fact]
-    public void CloneHeaders_DecodesEveryValueToText_AndIsIndependent()
+    public void CloneHeaders_AByteHeader_CopiesItAsIndependentText()
     {
         Transport transport = CreateSut(("key", "value"u8.ToArray()));
 

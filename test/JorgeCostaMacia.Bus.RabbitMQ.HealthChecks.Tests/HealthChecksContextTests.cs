@@ -23,7 +23,7 @@ public sealed class HealthChecksContextTests
         => Assert.Single(provider.GetRequiredService<IOptions<HealthCheckServiceOptions>>().Value.Registrations);
 
     [Fact]
-    public void AddRabbitMQBus_Defaults_RegistersTheCheckUnderItsDefaultName()
+    public void AddRabbitMQBus_WithoutArguments_RegistersTheCheckUnderItsDefaultName()
     {
         ServiceProvider provider = Provider(builder => builder.AddRabbitMQBus());
 
@@ -34,7 +34,7 @@ public sealed class HealthChecksContextTests
     }
 
     [Fact]
-    public void AddRabbitMQBus_Custom_RegistersTheNameStatusAndTags()
+    public void AddRabbitMQBus_WithANameStatusAndTags_RegistersThemOnTheCheck()
     {
         ServiceProvider provider = Provider(
             builder => builder.AddRabbitMQBus("orders-bus", HealthStatus.Degraded, new string[] { "ready" }));
@@ -46,7 +46,7 @@ public sealed class HealthChecksContextTests
     }
 
     [Fact]
-    public void AddRabbitMQBus_Factory_BuildsTheCheckOverTheBusConnection()
+    public void AddRabbitMQBus_ResolvedThroughItsFactory_BuildsTheCheckOverTheBusConnection()
     {
         ServiceProvider provider = Provider(builder => builder.AddRabbitMQBus());
 

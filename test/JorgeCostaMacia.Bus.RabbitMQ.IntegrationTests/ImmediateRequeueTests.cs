@@ -39,7 +39,7 @@ public sealed class ImmediateRequeueTests : IClassFixture<RabbitMqFixture>
     /// <summary>A handler that fails once, with a <c>00:00</c> retry step, is redelivered immediately and succeeds —
     /// invoked exactly twice, then acked.</summary>
     [Fact]
-    public async Task Send_ToAHandlerThatFailsOnce_IsRedeliveredAndSucceeds()
+    public async Task Send_ToAHandlerThatFailsOnceWithAZeroRetryStep_IsRedeliveredOnceAndSucceeds()
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         RequeueProbe probe = new RequeueProbe();
@@ -86,7 +86,7 @@ public sealed class ImmediateRequeueTests : IClassFixture<RabbitMqFixture>
     /// <summary>An event subscriber that fails once has its immediate retry re-targeted to its own group only — the
     /// failing subscriber runs twice, the other subscriber (which handled the original) runs exactly once.</summary>
     [Fact]
-    public async Task Publish_ToTwoSubscribersWhereOneFailsOnce_ReTargetsTheImmediateRetryToTheFailingSubscriberOnly()
+    public async Task Publish_ToTwoSubscribersWhereOneFailsOnce_RetriesOnlyTheFailingSubscriber()
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         RetargetProbe probe = new RetargetProbe();

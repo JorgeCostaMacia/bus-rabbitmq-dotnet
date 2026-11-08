@@ -20,7 +20,7 @@ public sealed class BusLoggerTests
     private readonly CapturingSink _sink = new CapturingSink();
 
     [Fact]
-    public void ProducerContext_TypesTheEnvelopeHeaders()
+    public void ProducerContext_WithGuidAndCountHeaders_LogsThemWithTheirRealTypes()
     {
         Guid aggregateId = Guid.CreateVersion7();
         Dictionary<string, string> headers = new Dictionary<string, string>()
@@ -85,7 +85,7 @@ public sealed class BusLoggerTests
     }
 
     [Fact]
-    public void ConsumerContext_TypesTheInboundHeaders_WhichArriveAsBytes()
+    public void ConsumerContext_WithGuidAndCountHeadersAsBytes_LogsThemWithTheirRealTypes()
     {
         // inbound is the asymmetric half: the AMQP field table hands every value back as byte[], so the
         // decode has to go through UTF-8 first — a path the outbound side never takes.

@@ -28,7 +28,7 @@ public sealed class RetryJobTests
         };
 
     [Fact]
-    public async Task Execute_ProducesTheBodyToTheExchange_WithAnEmptyRoutingKey()
+    public async Task Execute_WithAnExchangeAndABody_ProducesTheBodyWithAnEmptyRoutingKey()
     {
         await Execute(Data(exchange: "orders", body: "hello"u8.ToArray()));
 
@@ -39,7 +39,7 @@ public sealed class RetryJobTests
     }
 
     [Fact]
-    public async Task Execute_DecodesHeadersAsText()
+    public async Task Execute_WithParkedTextHeaders_ProducesThemAsText()
     {
         await Execute(Data(headers: EncodeHeaders(("k", "v"), ("s", "text"))));
 
@@ -88,7 +88,7 @@ public sealed class RetryJobTests
     }
 
     [Fact]
-    public async Task Execute_Succeeds_DeletesTheJob_PendingRepetitionsIncluded()
+    public async Task Execute_ProduceSucceedsWithRepetitionsPending_DeletesTheJobAndItsTrigger()
     {
         (IScheduler scheduler, IJobDetail job, ITrigger trigger) = await Seed();
 
@@ -100,7 +100,7 @@ public sealed class RetryJobTests
     }
 
     [Fact]
-    public async Task Execute_ProduceFails_LetsTheFailureBubble_AndWritesNothing()
+    public async Task Execute_ProduceFails_RethrowsAndLeavesTheJobUntouched()
     {
         // the failure path is pure Quartz lifecycle: the exception bubbles (Quartz wraps it for the
         // job listeners) and the trigger repeats the produce on its own, so the job must leave the

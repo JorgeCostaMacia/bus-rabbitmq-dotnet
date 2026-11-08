@@ -38,7 +38,7 @@ public sealed class RabbitLoggerTests
     }
 
     [Fact]
-    public void LogRecovered_IsInformational()
+    public void LogRecovered_ARecoveredConnection_LogsAtInformation()
     {
         RecordingLogger<RabbitLoggerTests> logger = new RecordingLogger<RabbitLoggerTests>();
 
@@ -50,7 +50,7 @@ public sealed class RabbitLoggerTests
     }
 
     [Fact]
-    public void LogRecoveryError_Warns_BecauseTheClientKeepsRetrying()
+    public void LogRecoveryError_AFailedRecoveryAttempt_Warns()
     {
         // a failed recovery attempt is not the end: the client retries on its own, so this must not read
         // as a dead connection.
@@ -64,7 +64,7 @@ public sealed class RabbitLoggerTests
     }
 
     [Fact]
-    public void LogCallbackException_LogsAtError()
+    public void LogCallbackException_AThrowingClientCallback_LogsAtError()
     {
         // this one is a bug in a handler the client invoked, and the client swallows it — without this
         // log it leaves no trace at all, which is why it is Error and not Warning.
@@ -80,6 +80,6 @@ public sealed class RabbitLoggerTests
     // the category is public API in practice: it is what an operator puts in appsettings to silence the
     // client's noise without touching the bus's own logs.
     [Fact]
-    public void Category_IsTheDedicatedClientCategory()
+    public void Category_ForClientLogs_IsTheDedicatedClientCategory()
         => Assert.Equal("JorgeCostaMacia.Bus.RabbitMQ.Client", RabbitLogger.Category);
 }

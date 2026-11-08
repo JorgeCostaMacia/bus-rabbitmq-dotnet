@@ -37,7 +37,7 @@ public sealed class MandatoryReturnTests : IClassFixture<RabbitMqFixture>
     /// <summary>An unroutable mandatory publish throws <see cref="PublishReturnException"/>, which the error handler
     /// classifies as a <see cref="RabbitMQClientException"/> (the <c>Unhandled</c> lane, not <c>Faulted</c>).</summary>
     [Fact]
-    public async Task MandatoryPublish_ThatIsUnroutable_ThrowsARabbitMQClientException()
+    public async Task BasicPublishAsync_MandatoryToAnUnroutableQueue_ThrowsARabbitMQClientException()
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         IConfiguration configuration = _fixture.BuildConfiguration();

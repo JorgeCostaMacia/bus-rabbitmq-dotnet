@@ -54,7 +54,7 @@ public sealed class RetrySchedulerTests
     }
 
     [Fact]
-    public async Task Schedule_WritesAJobKeyedByMessageIdAndRetryCount_GroupedByExchange()
+    public async Task Schedule_AFailedDelivery_KeysTheJobByMessageIdAndRetryCountUnderTheExchange()
     {
         Guid messageId = Guid.NewGuid();
         ISchedulerFactory factory = Factory();
@@ -78,7 +78,7 @@ public sealed class RetrySchedulerTests
     }
 
     [Fact]
-    public async Task Schedule_ParksTheJobDurable()
+    public async Task Schedule_AFailedDelivery_ParksTheJobAsDurable()
     {
         // durable from birth: when the last repetition fails, Quartz completes the trigger — the
         // durable job must stay parked in the store as the dead-letter instead of dying with it.
@@ -103,7 +103,7 @@ public sealed class RetrySchedulerTests
     }
 
     [Fact]
-    public async Task Schedule_DescribesTheJobAndTriggerWithTheQueue()
+    public async Task Schedule_AFailedDelivery_DescribesTheJobAndTriggerWithTheQueue()
     {
         Guid messageId = Guid.NewGuid();
         ISchedulerFactory factory = Factory();
@@ -126,7 +126,7 @@ public sealed class RetrySchedulerTests
     }
 
     [Fact]
-    public async Task Schedule_TriggerStartsAtTheGivenUtcTime()
+    public async Task Schedule_AGivenUtcTime_StartsTheTriggerAtIt()
     {
         Guid messageId = Guid.NewGuid();
         ISchedulerFactory factory = Factory();
@@ -149,7 +149,7 @@ public sealed class RetrySchedulerTests
     }
 
     [Fact]
-    public async Task Schedule_TriggerRepeatsEveryFiveMinutes_UpToMaxAttempts()
+    public async Task Schedule_AFailedDelivery_RepeatsTheTriggerEveryFiveMinutesUpToMaxAttempts()
     {
         // the produce re-executions ARE the trigger's own repetitions — a failed produce has
         // nothing to schedule, and Quartz itself counts the fires and completes the trigger.
@@ -176,7 +176,7 @@ public sealed class RetrySchedulerTests
     }
 
     [Fact]
-    public async Task Schedule_WritesTheExchangeAndBodyIntoTheJobData()
+    public async Task Schedule_AnExchangeAndABody_WritesBothIntoTheJobData()
     {
         Guid messageId = Guid.NewGuid();
         ISchedulerFactory factory = Factory();
@@ -201,7 +201,7 @@ public sealed class RetrySchedulerTests
     }
 
     [Fact]
-    public async Task Schedule_RoundTripsHeadersAsText()
+    public async Task Schedule_WithTextHeaders_StoresThemAsText()
     {
         // the wire carries a string → string table, so the parked envelope round-trips as canonical
         // text — the reading boundary materializes the types back on the produce.
@@ -228,7 +228,7 @@ public sealed class RetrySchedulerTests
     }
 
     [Fact]
-    public async Task Schedule_SameDeliveryTwice_ReparksTheSameJob_LastWriteWins()
+    public async Task Schedule_TheSameDeliveryTwice_ReparksOneJobAtTheLatestTime()
     {
         // an at-least-once duplicate of the same failure must not throw nor duplicate the park: it
         // overwrites job and trigger, restarting the ladder from the newest scheduled time (which
