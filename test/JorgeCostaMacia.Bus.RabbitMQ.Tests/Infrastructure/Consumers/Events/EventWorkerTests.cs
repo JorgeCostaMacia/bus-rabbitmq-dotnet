@@ -73,7 +73,7 @@ public sealed class EventWorkerTests
     }
 
     [Fact]
-    public async Task SubscriberSucceeds_AcksAndProducesNothing()
+    public async Task StartAsync_SubscriberSucceeds_AcksAndProducesNothing()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake();
 
@@ -89,7 +89,7 @@ public sealed class EventWorkerTests
     }
 
     [Fact]
-    public async Task SubscriberThrows_NoLadder_ParksToErrorQueue_AndAcks()
+    public async Task StartAsync_SubscriberThrowsWithNoLadder_ParksToTheErrorQueueAndAcks()
     {
         _subscriber.Failure = new InvalidOperationException("boom");
         ConsumerChannelFake channel = new ConsumerChannelFake();
@@ -104,7 +104,7 @@ public sealed class EventWorkerTests
     }
 
     [Fact]
-    public async Task SubscriberThrows_ZeroInterval_RepublishesToExchange_AndAcks()
+    public async Task StartAsync_SubscriberThrowsWithAZeroInterval_RepublishesToTheExchangeAndAcks()
     {
         _subscriber.Failure = new InvalidOperationException("boom");
         ConsumerChannelFake channel = new ConsumerChannelFake();
@@ -121,7 +121,7 @@ public sealed class EventWorkerTests
     }
 
     [Fact]
-    public async Task SubscriberThrows_ProducerBrokerFailure_NacksWithRequeue()
+    public async Task StartAsync_SubscriberThrowsAndTheRequeueHitsABrokerFailure_NacksWithRequeue()
     {
         _subscriber.Failure = new InvalidOperationException("boom");
         _producer.Failure = new BrokerFailure();
@@ -139,7 +139,7 @@ public sealed class EventWorkerTests
     }
 
     [Fact]
-    public async Task MalformedBody_ParksToFaultQueue_AndAcks()
+    public async Task StartAsync_AMalformedBody_ParksToTheFaultQueueAndAcks()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake();
 
@@ -151,7 +151,7 @@ public sealed class EventWorkerTests
     }
 
     [Fact]
-    public async Task NullBody_ParksToFaultQueue_AndAcks()
+    public async Task StartAsync_ANullBody_ParksToTheFaultQueueAndAcks()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake();
 
@@ -163,7 +163,7 @@ public sealed class EventWorkerTests
     }
 
     [Fact]
-    public async Task TargetedToOtherConsumers_SkipsAndAcks()
+    public async Task StartAsync_AnEventTargetedAtOtherConsumers_SkipsItAndAcks()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake();
 
@@ -178,7 +178,7 @@ public sealed class EventWorkerTests
     }
 
     [Fact]
-    public async Task TargetedToThisQueue_Processes()
+    public async Task StartAsync_AnEventTargetedAtItsQueue_RunsTheSubscriber()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake();
 

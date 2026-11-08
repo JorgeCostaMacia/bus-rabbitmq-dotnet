@@ -18,7 +18,7 @@ public sealed class CommandFaultHandlerTests
         => new FaultHandler(_producer, logger ?? NullLogger.Instance, Deliveries.Queue);
 
     [Fact]
-    public async Task ParksToFaultQueue_WithTheBodyAsText()
+    public async Task Handle_AnUnparseableBody_ParksItToTheFaultQueueAsText()
     {
         CommandFaultContext context = CommandFaultContext.Create(
             "not json"u8.ToArray(),
@@ -43,7 +43,7 @@ public sealed class CommandFaultHandlerTests
     }
 
     [Fact]
-    public async Task ParkedBody_CarriesTheFullExceptionChain_AndTheHost()
+    public async Task Handle_ANestedExceptionWithData_ParksTheFullChainAndTheHost()
     {
         Exception failure = new InvalidCastException(
             "outer",
@@ -65,7 +65,7 @@ public sealed class CommandFaultHandlerTests
     }
 
     [Fact]
-    public async Task ParkedHeaders_StampTheFailure()
+    public async Task Handle_AnUnparseableBody_StampsTheFailureOnTheParkedHeaders()
     {
         CommandFaultContext context = CommandFaultContext.Create(
             "not json"u8.ToArray(),
@@ -81,7 +81,7 @@ public sealed class CommandFaultHandlerTests
     }
 
     [Fact]
-    public async Task ProduceFails_LeavesUnhandled()
+    public async Task Handle_ProduceFails_LeavesUnhandled()
     {
         _producer.Failure = new InvalidOperationException("broker down");
 
@@ -97,11 +97,11 @@ public sealed class CommandFaultHandlerTests
     }
 
     [Fact]
-    public async Task ShutdownWhileParking_LeavesUnhandled_Silently()
+    public async Task Handle_ShutdownWhileParking_LeavesUnhandledSilently()
     {
         // a deploy cancels the token while the fault is being parked. The outcome matches a broker
         // failure — Unhandled, so the delivery is redelivered rather than acked away — but it must get
-        // there silently: the generic catch logs "Parking failed." at Error, and a routine shutdown
+        // there silently: the generic catch logs "ParkingFailed" at Error, and a routine shutdown
         // must not look like a parking outage.
         RecordingLogger<CommandFaultHandlerTests> logger = new RecordingLogger<CommandFaultHandlerTests>();
         _producer.Failure = new OperationCanceledException();

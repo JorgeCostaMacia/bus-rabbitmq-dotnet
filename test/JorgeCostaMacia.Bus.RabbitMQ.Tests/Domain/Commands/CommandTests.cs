@@ -7,7 +7,7 @@ namespace JorgeCostaMacia.Bus.RabbitMQ.Tests.Domain.Commands;
 public sealed class CommandTests
 {
     [Fact]
-    public void Command_RoundTrips_ThroughTheSerializer()
+    public void Serialize_ACommandWithEveryTraceField_RoundTripsThemAll()
     {
         TestCommand command = new TestCommand(
             "pepe",
@@ -27,7 +27,7 @@ public sealed class CommandTests
     }
 
     [Fact]
-    public void Command_Defaults_GenerateTheTrace()
+    public void Constructor_WithOnlyAName_GeneratesTheTrace()
     {
         DateTime before = DateTime.UtcNow;
 
@@ -40,7 +40,7 @@ public sealed class CommandTests
     }
 
     [Fact]
-    public void Command_SuppliedValues_AreKept()
+    public void Constructor_WithEveryTraceValue_KeepsThem()
     {
         Guid id = Guid.NewGuid();
         Guid correlation = Guid.NewGuid();

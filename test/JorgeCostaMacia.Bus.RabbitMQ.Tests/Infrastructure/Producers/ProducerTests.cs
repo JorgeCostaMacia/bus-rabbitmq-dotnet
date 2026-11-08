@@ -22,7 +22,7 @@ public sealed class ProducerTests
     private static Dictionary<string, string> Headers() => new Dictionary<string, string>();
 
     [Fact]
-    public async Task Produce_PublishesToTheExchangeWithTheRoutingKey()
+    public async Task Produce_AnExchangeAndARoutingKey_PublishesToThem()
     {
         await Sut().Produce("orders", "rk", "hi"u8.ToArray(), Headers(), TestContext.Current.CancellationToken);
 
@@ -33,7 +33,7 @@ public sealed class ProducerTests
     }
 
     [Fact]
-    public async Task Produce_MarksTheMessagePersistent()
+    public async Task Produce_ToAnExchange_MarksTheMessagePersistent()
     {
         await Sut().Produce("orders", string.Empty, "{}"u8.ToArray(), Headers(), TestContext.Current.CancellationToken);
 
@@ -87,7 +87,7 @@ public sealed class ProducerTests
     }
 
     [Fact]
-    public async Task DisposeAsync_ClosesEveryDestinationChannel()
+    public async Task DisposeAsync_AfterAProduce_ClosesEveryDestinationChannel()
     {
         RabbitProducer sut = Sut();
 
@@ -98,7 +98,7 @@ public sealed class ProducerTests
     }
 
     [Fact]
-    public async Task Park_RedeclaresTheDurableQueue_AndPublishesMandatoryThroughTheDefaultExchange()
+    public async Task Park_ToAParkQueue_RedeclaresItAndPublishesMandatoryThroughTheDefaultExchange()
     {
         // the loss-proof park: the idempotent declare recreates a park queue deleted at runtime
         // (the consumers' exact options), and mandatory makes an unroutable park throw instead of
@@ -118,7 +118,7 @@ public sealed class ProducerTests
     }
 
     [Fact]
-    public async Task Produce_PublishesWithoutMandatory()
+    public async Task Produce_ToAnExchange_PublishesWithoutMandatory()
     {
         // an unroutable normal publish is legitimate (a fanout with no subscribers) — only parks trip.
         await Sut().Produce("orders", string.Empty, "{}"u8.ToArray(), Headers(), TestContext.Current.CancellationToken);
@@ -141,11 +141,11 @@ public sealed class ProducerTests
 
         (LogLevel level, string message) = Assert.Single(_logger.Logged);
         Assert.Equal(LogLevel.Error, level);
-        Assert.Equal("Producer failed.", message);
+        Assert.Equal("ProducerFailed", message);
     }
 
     [Fact]
-    public async Task Produce_StampsTheHostHeaders()
+    public async Task Produce_AnEnvelopeWithoutHostHeaders_StampsTheHost()
     {
         await Sut().Produce("orders", string.Empty, "{}"u8.ToArray(), Headers(), TestContext.Current.CancellationToken);
 
@@ -157,7 +157,7 @@ public sealed class ProducerTests
     }
 
     [Fact]
-    public async Task Produce_ReStampsTheHost_OverGivenHeaders()
+    public async Task Produce_AnEnvelopeStampedByAnotherHost_ReStampsTheHost()
     {
         Dictionary<string, string> headers = new Dictionary<string, string>()
         {
@@ -172,7 +172,7 @@ public sealed class ProducerTests
     }
 
     [Fact]
-    public async Task Produce_CarriesTheGivenEnvelopeHeaders()
+    public async Task Produce_AnEnvelopeWithAMessageId_CarriesItAsAHeader()
     {
         Guid messageId = Guid.NewGuid();
         Dictionary<string, string> headers = new Dictionary<string, string>()
@@ -188,7 +188,7 @@ public sealed class ProducerTests
     }
 
     [Fact]
-    public async Task Produce_MapsTheEnvelopeToNativeAmqpProperties()
+    public async Task Produce_AnEnvelopeWithIdsTypeAndTime_MapsThemToNativeAmqpProperties()
     {
         Guid messageId = Guid.NewGuid();
         Guid conversationId = Guid.NewGuid();
@@ -218,7 +218,7 @@ public sealed class ProducerTests
     {
         // the native mirroring is best-effort: an undecodable jcm-message-id leaves BasicProperties
         // .MessageId unset rather than stamping garbage. The valid-guid case is covered by
-        // Produce_MapsTheEnvelopeToNativeAmqpProperties.
+        // Produce_AnEnvelopeWithIdsTypeAndTime_MapsThemToNativeAmqpProperties.
         Dictionary<string, string> headers = new Dictionary<string, string>()
         {
             [TransportHeaders.MessageId] = "not-a-guid"

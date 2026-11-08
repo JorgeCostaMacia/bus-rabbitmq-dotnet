@@ -128,7 +128,7 @@ internal static class BusLogger
             new PropertyEnricher("Retry", retry),
             new PropertyEnricher("BusDescription", BusLoggerDescriptions.RepublishedToRetry)))
         {
-            logger.LogWarning(exception, "Handler failed.");
+            logger.LogWarning(exception, "HandlerFailed");
         }
     }
 
@@ -150,7 +150,7 @@ internal static class BusLogger
             new PropertyEnricher("ScheduledAt", scheduledAt),
             new PropertyEnricher("BusDescription", BusLoggerDescriptions.ScheduledToRetry)))
         {
-            logger.LogWarning(exception, "Handler failed.");
+            logger.LogWarning(exception, "HandlerFailed");
         }
     }
 

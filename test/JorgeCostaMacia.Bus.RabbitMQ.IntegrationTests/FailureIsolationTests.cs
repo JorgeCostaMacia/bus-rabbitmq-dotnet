@@ -36,7 +36,7 @@ public sealed class FailureIsolationTests : IClassFixture<RabbitMqFixture>
     /// <summary>Every good record in a batch is handled and each poison record is parked, without a failure stalling
     /// the batch.</summary>
     [Fact]
-    public async Task Send_aBatchMixingGoodAndPoisonRecords_HandlesEveryGoodOneAndIsolatesThePoisonWithoutStalling()
+    public async Task Send_ABatchMixingGoodAndPoisonRecords_HandlesEveryGoodOneAndIsolatesThePoisonWithoutStalling()
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         IConfiguration configuration = _fixture.BuildConfiguration();

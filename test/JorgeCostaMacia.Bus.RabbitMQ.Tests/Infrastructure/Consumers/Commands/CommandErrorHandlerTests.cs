@@ -42,7 +42,7 @@ public sealed class CommandErrorHandlerTests
             excludes ?? ImmutableList<Type>.Empty);
 
     [Fact]
-    public async Task NoLadder_ParksToErrorQueue()
+    public async Task Handle_NoLadder_ParksToTheErrorQueue()
     {
         CommandErrorContext<TestCommand> context = new CommandErrorContext<TestCommand>(
             new TestCommand("pepe"),
@@ -75,7 +75,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task ParkedHeaders_CarryTheFailedMessageTrace()
+    public async Task Handle_ATracedDeliveryWithNoLadder_ParksItWithTheTraceHeaders()
     {
         Guid aggregateId = Guid.NewGuid();
         Guid aggregateCorrelationId = Guid.NewGuid();
@@ -92,7 +92,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task ParkedBody_CarriesTheFullExceptionChain_AndTheHost()
+    public async Task Handle_ANestedExceptionWithData_ParksTheFullChainAndTheHost()
     {
         Exception failure = new InvalidOperationException(
             "outer",
@@ -114,7 +114,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task ZeroInterval_RepublishesToTheExchange()
+    public async Task Handle_ZeroInterval_RepublishesToTheExchange()
     {
         ErrorHandler sut = CommandError(ImmutableList.Create(TimeSpan.Zero));
 
@@ -135,7 +135,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task PositiveInterval_ParksThroughScheduler()
+    public async Task Handle_PositiveInterval_SchedulesTheRetry()
     {
         ErrorHandler sut = CommandError(ImmutableList.Create(TimeSpan.FromMinutes(5)));
 
@@ -156,7 +156,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task PositiveInterval_WithoutScheduler_ParksAsTerminal()
+    public async Task Handle_PositiveIntervalWithoutAScheduler_ParksAsTerminal()
     {
         ErrorHandler sut = CommandError(ImmutableList.Create(TimeSpan.FromMinutes(5)), scheduler: false);
 
@@ -175,7 +175,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task SchedulerFails_LeavesUnhandled()
+    public async Task Handle_SchedulerFails_LeavesUnhandled()
     {
         _scheduler.Failure = new InvalidOperationException("scheduler down");
         ErrorHandler sut = CommandError(ImmutableList.Create(TimeSpan.FromMinutes(5)));
@@ -192,7 +192,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task LadderExhausted_Parks()
+    public async Task Handle_LadderExhausted_ParksToTheErrorQueue()
     {
         ErrorHandler sut = CommandError(ImmutableList.Create(TimeSpan.Zero, TimeSpan.Zero));
 
@@ -208,7 +208,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task ExcludedException_Parks_InheritanceAware()
+    public async Task Handle_ASubclassOfAnExcludedException_ParksWithoutRetrying()
     {
         ErrorHandler sut = CommandError(ImmutableList.Create(TimeSpan.Zero), ImmutableList.Create(typeof(BaseFailure)));
 
@@ -224,7 +224,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task RequeueBrokerFailure_LeavesUnhandled()
+    public async Task Handle_RequeueHitsABrokerFailure_LeavesUnhandled()
     {
         _producer.Failure = new BrokerFailure();
         ErrorHandler sut = CommandError(ImmutableList.Create(TimeSpan.Zero));
@@ -240,7 +240,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task RequeueUnexpectedError_LeavesFaulted()
+    public async Task Handle_RequeueHitsAnUnexpectedError_LeavesFaulted()
     {
         _producer.Failure = new InvalidOperationException("unexpected");
         ErrorHandler sut = CommandError(ImmutableList.Create(TimeSpan.Zero));
@@ -256,7 +256,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task SecondRetry_ContinuesTheCumulativeCount()
+    public async Task Handle_ASecondRetry_ContinuesTheCumulativeCount()
     {
         ErrorHandler sut = CommandError(ImmutableList.Create(TimeSpan.Zero, TimeSpan.Zero, TimeSpan.Zero));
 
@@ -272,11 +272,11 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task ShutdownWhileParking_LeavesUnhandled_Silently()
+    public async Task Handle_ShutdownWhileParking_LeavesUnhandledSilently()
     {
         // a deploy cancels the token mid-park. Unhandled is the only safe answer — the delivery stays
         // unacked, so whoever is still running gets it — and it must be SILENT: the generic catch logs
-        // "Producer failed." at Error, and a routine shutdown must not put an error in the log.
+        // "ProducerFailed" at Error, and a routine shutdown must not put an error in the log.
         RecordingLogger<TestCommand> logger = new RecordingLogger<TestCommand>();
         _producer.Failure = new OperationCanceledException();
         ErrorHandler sut = CommandError(logger: logger);
@@ -293,7 +293,7 @@ public sealed class CommandErrorHandlerTests
     }
 
     [Fact]
-    public async Task ShutdownWhileScheduling_LeavesUnhandled_Silently()
+    public async Task Handle_ShutdownWhileScheduling_LeavesUnhandledSilently()
     {
         // same during a delayed retry: cancelling the schedule must not read as a scheduler outage.
         RecordingLogger<TestCommand> logger = new RecordingLogger<TestCommand>();

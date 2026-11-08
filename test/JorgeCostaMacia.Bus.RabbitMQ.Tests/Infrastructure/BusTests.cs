@@ -41,7 +41,7 @@ public sealed class BusTests
     }
 
     [Fact]
-    public async Task Send_Fresh_BuildsANewEnvelope()
+    public async Task Send_WithoutTransport_BuildsANewEnvelope()
     {
         TestCommand command = new TestCommand(
             "pepe",
@@ -118,7 +118,7 @@ public sealed class BusTests
     }
 
     [Fact]
-    public async Task Publish_WithTransport_EmptyAggregateConsumers_ClearsTheInboundTargeting()
+    public async Task Publish_WithTransportAndAnUntargetedEvent_ClearsTheInboundTargeting()
     {
         // the continuation re-stamps AggregateConsumers from the outbound message: an untargeted
         // message (empty list) clears the inbound targeting instead of carrying it over.
@@ -175,7 +175,7 @@ public sealed class BusTests
     }
 
     [Fact]
-    public async Task Send_SerializesTheRuntimeType()
+    public async Task Send_ACommandWithItsOwnFields_SerializesTheRuntimeType()
     {
         await CreateSut((typeof(TestCommand), "orders")).Send(
             new TestCommand("pepe"),

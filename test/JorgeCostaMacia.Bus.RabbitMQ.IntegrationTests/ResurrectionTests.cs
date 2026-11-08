@@ -32,7 +32,7 @@ public sealed class ResurrectionTests : IClassFixture<RabbitMqFixture>
 
     /// <summary>Deleting the queue cancels the consumer; the worker resurrects and keeps processing.</summary>
     [Fact]
-    public async Task DeletingTheQueue_ResurrectsTheConsumer_AndKeepsProcessing()
+    public async Task Send_AfterTheConsumerQueueIsDeleted_ResurrectsTheConsumerAndKeepsHandling()
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         IConfiguration configuration = _fixture.BuildConfiguration();

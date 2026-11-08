@@ -50,7 +50,7 @@ public sealed class EventContextTests
         Transport());
 
     [Fact]
-    public void MessageAndTransport_AreTheDeliveredPair()
+    public void Constructor_WithAMessageAndATransport_ExposesThemAsTheDeliveredPair()
     {
         TestEvent @event = new TestEvent("pepe");
         Transport transport = Transport();
@@ -64,7 +64,7 @@ public sealed class EventContextTests
     }
 
     [Fact]
-    public void AggregateTrace_ReadsFromTheTransportHeaders()
+    public void Constructor_WithAggregateHeaders_ExposesTheAggregateTrace()
     {
         EventContext<TestEvent> context = CreateSut();
 
@@ -74,7 +74,7 @@ public sealed class EventContextTests
     }
 
     [Fact]
-    public void Conversation_ReadsFromTheTransportHeaders()
+    public void Constructor_WithConversationHeaders_ExposesTheConversation()
     {
         EventContext<TestEvent> context = CreateSut();
 
@@ -84,15 +84,15 @@ public sealed class EventContextTests
     }
 
     [Fact]
-    public void RetryCount_ReadsFromTheTransportHeaders()
+    public void RetryCount_WithARetryCountHeader_ReadsIt()
         => Assert.Equal(3, CreateSut().RetryCount);
 
     [Fact]
-    public void AggregateConsumers_ReadsTheTargetsFromTheTransportHeaders()
+    public void AggregateConsumers_WithAConsumersHeader_ReadsTheTargets()
         => Assert.Equal(new string[] { "g1", "g2" }, CreateSut().AggregateConsumers);
 
     [Fact]
-    public void Host_ReadsFromTheTransportHeaders()
+    public void Constructor_WithHostHeaders_ExposesTheHost()
     {
         EventContext<TestEvent> context = CreateSut();
 
@@ -105,7 +105,7 @@ public sealed class EventContextTests
     }
 
     [Fact]
-    public void MessageFacet_ReadsFromTheTransportHeaders()
+    public void Constructor_WithMessageHeaders_ExposesTheMessageFacet()
     {
         // the message facet is the envelope's own identity, separate from the aggregate's and the
         // conversation's: it is what identifies THIS delivery, so a handler logging or deduplicating on

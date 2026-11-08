@@ -7,7 +7,7 @@ namespace JorgeCostaMacia.Bus.RabbitMQ.Tests.Infrastructure.Producers;
 public sealed class TopologyWorkerTests
 {
     [Fact]
-    public async Task StartAsync_DeclaresEveryMappedExchange_MatchingTheConsumersOptions()
+    public async Task StartAsync_MappedDirectAndFanoutExchanges_DeclaresThemWithTheConsumersOptions()
     {
         // the producer's exchanges are born at startup, idempotently, with exactly the options the
         // consumers declare with (durable, not auto-delete) — a mismatch would fail their declare.

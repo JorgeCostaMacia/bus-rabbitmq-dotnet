@@ -174,7 +174,7 @@ internal abstract class ConsumerWorker<TContext, THandler> : IHostedService
         using (BusLogger.ShutdownContext(reason))
         using (BusLogger.DescriptionContext(BusLoggerDescriptions.ConsumerChannelClosed))
         {
-            _logger.LogWarning("Channel closed.");
+            _logger.LogWarning("ChannelClosed");
         }
 
         if (Interlocked.CompareExchange(ref _resurrecting, 1, 0) == 0)
@@ -245,7 +245,7 @@ internal abstract class ConsumerWorker<TContext, THandler> : IHostedService
                     using (BusLogger.WorkerContext(_exchange, _queue))
                     using (BusLogger.DescriptionContext(BusLoggerDescriptions.ConsumerChannelRestored))
                     {
-                        _logger.LogInformation("Channel restored.");
+                        _logger.LogInformation("ChannelRestored");
                     }
 
                     return;
@@ -352,7 +352,7 @@ internal abstract class ConsumerWorker<TContext, THandler> : IHostedService
         {
             using (BusLogger.DescriptionContext(BusLoggerDescriptions.RedeliveredOnRecovery))
             {
-                _logger.LogWarning(exception, "Ack failed.");
+                _logger.LogWarning(exception, "AckFailed");
             }
         }
     }
@@ -394,7 +394,7 @@ internal abstract class ConsumerWorker<TContext, THandler> : IHostedService
         {
             using (BusLogger.DescriptionContext(BusLoggerDescriptions.NackedWithRequeue))
             {
-                _logger.LogError(failure, "Error handler failed.");
+                _logger.LogError(failure, "ErrorHandlerFailed");
             }
 
             await Nack(channel, args);
@@ -452,7 +452,7 @@ internal abstract class ConsumerWorker<TContext, THandler> : IHostedService
         {
             using (BusLogger.DescriptionContext(BusLoggerDescriptions.NackedWithRequeue))
             {
-                _logger.LogError(failure, "Fault handler failed.");
+                _logger.LogError(failure, "FaultHandlerFailed");
             }
 
             await Nack(channel, args);
@@ -514,7 +514,7 @@ internal abstract class ConsumerWorker<TContext, THandler> : IHostedService
         {
             using (BusLogger.DescriptionContext(BusLoggerDescriptions.RedeliveredOnRecovery))
             {
-                _logger.LogWarning(exception, "Nack failed.");
+                _logger.LogWarning(exception, "NackFailed");
             }
         }
     }
@@ -539,7 +539,7 @@ internal abstract class ConsumerWorker<TContext, THandler> : IHostedService
         using (BusLogger.WorkerContext(_exchange, _queue))
         using (BusLogger.DescriptionContext(BusLoggerDescriptions.WorkerStopped))
         {
-            _logger.LogInformation("Worker stopped.");
+            _logger.LogInformation("WorkerStopped");
         }
     }
 }

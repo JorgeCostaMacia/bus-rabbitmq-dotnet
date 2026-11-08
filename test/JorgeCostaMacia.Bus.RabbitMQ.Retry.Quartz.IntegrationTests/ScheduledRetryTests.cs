@@ -37,7 +37,7 @@ public sealed class ScheduledRetryTests : IClassFixture<RetryQuartzFixture>
     /// <summary>A failed delivery is parked as a durable Quartz job in Postgres and redelivered when its trigger
     /// fires.</summary>
     [Fact]
-    public async Task A_failed_delivery_is_parked_in_Postgres_and_redelivered_by_the_Quartz_scheduler()
+    public async Task Send_ToAHandlerThatFailsOnceWithATimedRetryStep_ParksItInPostgresAndRedeliversIt()
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         RetryProbe probe = new RetryProbe();

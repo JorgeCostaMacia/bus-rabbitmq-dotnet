@@ -77,7 +77,7 @@ public sealed class BusContextTests
     }
 
     [Fact]
-    public void AddBusContext_ProducerOnly_RegistersTheSendSide_AndNeedsNoConsumer()
+    public void AddBusContext_WithoutAConsumer_RegistersOnlyTheSendSide()
     {
         ServiceCollection services = new ServiceCollection();
 
@@ -109,7 +109,7 @@ public sealed class BusContextTests
     }
 
     [Fact]
-    public void AddCommandAndEvent_SharingAnExchange_Throws()
+    public void AddBusContext_ACommandAndAnEventSharingAnExchange_Throws()
     {
         // an exchange cannot be direct (commands) and fanout (events) at once — the broker would
         // reject the second declare, so the misconfiguration must surface at registration.
@@ -137,7 +137,7 @@ public sealed class BusContextTests
     }
 
     [Fact]
-    public void AddCommandHandler_RegistersTheHandlerAndItsWorker()
+    public void AddCommandHandler_ForAMappedCommand_RegistersTheHandlerAndItsWorker()
     {
         ServiceCollection services = new ServiceCollection();
 
@@ -161,7 +161,7 @@ public sealed class BusContextTests
     }
 
     [Fact]
-    public void AddEventSubscriber_RegistersTheSubscriberAndItsWorker()
+    public void AddEventSubscriber_ForAMappedEvent_RegistersTheSubscriberAndItsWorker()
     {
         ServiceCollection services = new ServiceCollection();
 

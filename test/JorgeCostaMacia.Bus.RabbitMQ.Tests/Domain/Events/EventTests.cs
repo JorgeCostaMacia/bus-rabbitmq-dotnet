@@ -5,7 +5,7 @@ namespace JorgeCostaMacia.Bus.RabbitMQ.Tests.Domain.Events;
 public sealed class EventTests
 {
     [Fact]
-    public void Event_Defaults_GenerateTheTrace()
+    public void Constructor_WithOnlyAName_GeneratesTheTrace()
     {
         TestEvent @event = new TestEvent("pepe");
 
@@ -15,7 +15,7 @@ public sealed class EventTests
     }
 
     [Fact]
-    public void Event_SuppliedCorrelation_IsKept()
+    public void Constructor_WithACorrelationId_KeepsItApartFromTheAggregateId()
     {
         Guid correlation = Guid.NewGuid();
 
