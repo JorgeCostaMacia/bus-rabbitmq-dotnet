@@ -320,7 +320,7 @@ public sealed class CommandWorkerTests
         await worker.StartAsync(TestContext.Current.CancellationToken);
         await channel.CloseAsync(new ShutdownEventArgs(ShutdownInitiator.Peer, 541, "INTERNAL_ERROR"));
 
-        Assert.Equal((LogLevel.Warning, "Channel closed."), Assert.Single(logger.Logged));
+        Assert.Equal((LogLevel.Warning, "ChannelClosed"), Assert.Single(logger.Logged));
         Assert.False(channel.Disposed);
 
         await worker.StopAsync(TestContext.Current.CancellationToken);
@@ -335,7 +335,7 @@ public sealed class CommandWorkerTests
     {
         // the worker's own dispose of a replaced channel raises the shutdown event with the
         // Application initiator: not a death — no warning, no resurrection. Observed live: every
-        // resurrection used to log its own funeral as a spurious "Channel closed." warning.
+        // resurrection used to log its own funeral as a spurious "ChannelClosed" warning.
         ConsumerChannelFake channel = new ConsumerChannelFake();
         RecordingLogger<CommandWorker<TestCommand, RecordingCommandHandler>> logger
             = new RecordingLogger<CommandWorker<TestCommand, RecordingCommandHandler>>();
@@ -346,7 +346,7 @@ public sealed class CommandWorkerTests
         await channel.CloseAsync(new ShutdownEventArgs(ShutdownInitiator.Application, 200, "Goodbye"));
         await Task.Delay(100, TestContext.Current.CancellationToken);
 
-        Assert.DoesNotContain(logger.Logged, log => log.Message == "Channel closed.");
+        Assert.DoesNotContain(logger.Logged, log => log.Message == "ChannelClosed");
         Assert.Equal(1, channel.Created);
 
         await worker.StopAsync(TestContext.Current.CancellationToken);
@@ -366,7 +366,7 @@ public sealed class CommandWorkerTests
         await worker.StopAsync(TestContext.Current.CancellationToken);
         await channel.CloseAsync(new ShutdownEventArgs(ShutdownInitiator.Application, 200, "Goodbye"));
 
-        Assert.DoesNotContain(logger.Logged, log => log.Message == "Channel closed.");
+        Assert.DoesNotContain(logger.Logged, log => log.Message == "ChannelClosed");
     }
 
     [Fact]
@@ -390,7 +390,7 @@ public sealed class CommandWorkerTests
         Assert.Equal(2, channel.Created);
         Assert.True(replacement.Declared);
         Assert.Equal(Deliveries.Queue, replacement.ConsumedQueue);
-        Assert.Contains((LogLevel.Information, "Channel restored."), logger.Logged);
+        Assert.Contains((LogLevel.Information, "ChannelRestored"), logger.Logged);
         Assert.False(replacement.Disposed);
 
         await replacement.DeliverAsync(Deliveries.Delivery(new TestCommand("pepe")));
@@ -485,7 +485,7 @@ public sealed class CommandWorkerTests
 
         Assert.Equal(1, channel.Created);
         Assert.False(channel.Disposed);
-        Assert.DoesNotContain(logger.Logged, log => log.Message == "Channel restored.");
+        Assert.DoesNotContain(logger.Logged, log => log.Message == "ChannelRestored");
 
         await worker.StopAsync(TestContext.Current.CancellationToken);
     }
@@ -508,7 +508,7 @@ public sealed class CommandWorkerTests
         await Task.Delay(TimeSpan.FromMilliseconds(100), TestContext.Current.CancellationToken);
 
         Assert.Equal(1, channel.Created);
-        Assert.DoesNotContain(logger.Logged, log => log.Message == "Channel restored.");
+        Assert.DoesNotContain(logger.Logged, log => log.Message == "ChannelRestored");
     }
 
     [Fact]

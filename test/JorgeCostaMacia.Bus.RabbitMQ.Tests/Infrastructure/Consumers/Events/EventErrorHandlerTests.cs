@@ -282,7 +282,7 @@ public sealed class EventErrorHandlerTests
     {
         // a deploy cancels the token mid-park. Unhandled is the only safe answer — the delivery stays
         // unacked, so whoever is still running gets it — and it must be SILENT: the generic catch logs
-        // "Producer failed." at Error, and a routine shutdown must not put an error in the log.
+        // "ProducerFailed" at Error, and a routine shutdown must not put an error in the log.
         RecordingLogger<TestEvent> logger = new RecordingLogger<TestEvent>();
         _producer.Failure = new OperationCanceledException();
         ErrorHandler sut = EventError(logger: logger);
