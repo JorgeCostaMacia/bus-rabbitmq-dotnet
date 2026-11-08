@@ -1,0 +1,35 @@
+<Project>
+
+	<!-- Repo identity + the single (lockstep) release version — shared by every project -->
+	<PropertyGroup>
+		<VersionPrefix>4.4.0</VersionPrefix>
+		<Authors>JorgeCostaMacia</Authors>
+		<Company>$(Authors)</Company>
+		<Copyright>2023-2026 Jorge Costa Maciá</Copyright>
+		<RepositoryUrl>https://github.com/JorgeCostaMacia/bus-rabbitmq-dotnet</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
+
+	<!-- Build settings common to every project (packages and tests alike) -->
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<!-- A project packs only by saying so: src/ opts in, everything else (tests) stays out -->
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<!-- NuGet vulnerability audit on every restore: direct AND transitive packages, every severity reported.
+	     With TreatWarningsAsErrors every reported advisory fails the build; NU1903/NU1904 are pinned so the two
+	     highest stay errors even if the blanket setting ever goes. -->
+	<PropertyGroup>
+		<NuGetAudit>true</NuGetAudit>
+		<NuGetAuditMode>all</NuGetAuditMode>
+		<NuGetAuditLevel>low</NuGetAuditLevel>
+		<WarningsAsErrors>$(WarningsAsErrors);NU1903;NU1904</WarningsAsErrors>
+	</PropertyGroup>
+
+</Project>

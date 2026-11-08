@@ -1,0 +1,21 @@
+# Develop: the gate on develop and on pull requests — guards, build, format check, test and pack, no publish.
+name: Develop
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop", "main" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: develop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: JorgeCostaMacia/github-workflows/.github/workflows/dotnet-build-nuget.yml@v1
+    with:
+      solution: bus-rabbitmq-dotnet.slnx
