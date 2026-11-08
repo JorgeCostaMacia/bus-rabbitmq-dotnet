@@ -30,7 +30,7 @@ public sealed class FanoutTests : IClassFixture<RabbitMqFixture>
     /// <summary>One published event is delivered to two subscribers on two queues bound to its fanout
     /// exchange.</summary>
     [Fact]
-    public async Task Publish_AnEvent_FansOutToEverySubscriber()
+    public async Task Publish_WithTwoSubscribers_DeliversTheEventToBoth()
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         FanoutProbe probe = new FanoutProbe();

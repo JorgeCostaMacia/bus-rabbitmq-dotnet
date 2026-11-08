@@ -22,10 +22,10 @@
 		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.14" />
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.403" />
 		<PackageVersion Include="Npgsql" Version="10.0.3" />
-		<PackageVersion Include="Quartz" Version="4.6.2" />
-		<PackageVersion Include="Quartz.Extensions.DependencyInjection" Version="4.6.2" />
-		<PackageVersion Include="Quartz.Extensions.Hosting" Version="4.6.2" />
-		<PackageVersion Include="Quartz.Serialization.SystemTextJson" Version="4.6.2" />
+		<PackageVersion Include="Quartz" Version="4.7.2" />
+		<PackageVersion Include="Quartz.Extensions.DependencyInjection" Version="4.7.2" />
+		<PackageVersion Include="Quartz.Extensions.Hosting" Version="4.7.2" />
+		<PackageVersion Include="Quartz.Serialization.SystemTextJson" Version="4.7.2" />
 		<PackageVersion Include="RabbitMQ.Client" Version="7.2.2" />
 		<PackageVersion Include="Serilog" Version="4.4.0" />
 		<PackageVersion Include="Testcontainers" Version="4.16.0" />

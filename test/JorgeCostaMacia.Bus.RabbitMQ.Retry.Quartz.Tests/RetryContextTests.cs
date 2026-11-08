@@ -7,7 +7,7 @@ namespace JorgeCostaMacia.Bus.RabbitMQ.Retry.Quartz.Tests;
 public sealed class RetryContextTests
 {
     [Fact]
-    public void AddRetryContext_RegistersTheQuartzRetryScheduler_AsSingleton()
+    public void AddRetryContext_OnAnEmptyCollection_RegistersTheQuartzRetrySchedulerAsSingleton()
     {
         ServiceCollection services = new ServiceCollection();
 

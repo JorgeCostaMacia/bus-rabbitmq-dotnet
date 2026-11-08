@@ -93,7 +93,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task HandlerSucceeds_AcksAndProducesNothing()
+    public async Task StartAsync_HandlerSucceeds_AcksAndProducesNothing()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake();
 
@@ -109,7 +109,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task AckFails_AfterSuccessfulHandling_DoesNotParkNorNack()
+    public async Task StartAsync_AckFailsAfterTheHandlerSucceeds_NeitherParksNorNacks()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake() { AckFailure = new BrokerFailure() };
 
@@ -121,7 +121,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task ErrorHandlerThrows_NacksWithRequeue_WithoutTearingDown()
+    public async Task StartAsync_ErrorHandlerThrows_NacksWithRequeueWithoutTearingDown()
     {
         // the error lane's endgame: the error handler itself breaking returns the delivery to the
         // broker (nack with requeue) instead of tearing down the worker.
@@ -141,7 +141,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task FaultHandlerThrows_NacksWithRequeue_WithoutTearingDown()
+    public async Task StartAsync_FaultHandlerThrows_NacksWithRequeueWithoutTearingDown()
     {
         // the last net's endgame: even the fault handler breaking returns the delivery to the
         // broker (nack with requeue) instead of tearing down the worker.
@@ -157,7 +157,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task AckFails_AfterErrorPark_DoesNotNackNorParkTwice()
+    public async Task StartAsync_AckFailsAfterAnErrorPark_NeitherNacksNorParksTwice()
     {
         // the park to .error succeeded and only the ack failed: a nack would redeliver and park a
         // duplicate — the delivery stays unacked (logged) for the broker to redeliver on recovery.
@@ -171,7 +171,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task AckFails_AfterFaultPark_DoesNotNackNorParkTwice()
+    public async Task StartAsync_AckFailsAfterAFaultPark_NeitherNacksNorParksTwice()
     {
         // the same isolation for the fault lane: the park to .fault exists, only the receipt failed.
         ConsumerChannelFake channel = new ConsumerChannelFake() { AckFailure = new BrokerFailure() };
@@ -183,7 +183,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task HandlerThrows_NoLadder_ParksToErrorQueue_AndAcks()
+    public async Task StartAsync_HandlerThrowsWithNoLadder_ParksToTheErrorQueueAndAcks()
     {
         _handler.Failure = new InvalidOperationException("boom");
         ConsumerChannelFake channel = new ConsumerChannelFake();
@@ -198,7 +198,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task HandlerThrows_ZeroInterval_RepublishesToExchange_AndAcks()
+    public async Task StartAsync_HandlerThrowsWithAZeroInterval_RepublishesToTheExchangeAndAcks()
     {
         _handler.Failure = new InvalidOperationException("boom");
         ConsumerChannelFake channel = new ConsumerChannelFake();
@@ -215,7 +215,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task HandlerThrows_PositiveInterval_SchedulesTheRetry_AndAcks()
+    public async Task StartAsync_HandlerThrowsWithAPositiveInterval_SchedulesTheRetryAndAcks()
     {
         // the delayed retry is parked through the scheduler, not published: the delivery is done —
         // acked like a requeue or a park.
@@ -235,7 +235,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task HandlerThrows_ProducerBrokerFailure_NacksWithRequeue()
+    public async Task StartAsync_HandlerThrowsAndTheRequeueHitsABrokerFailure_NacksWithRequeue()
     {
         _handler.Failure = new InvalidOperationException("boom");
         _producer.Failure = new BrokerFailure();
@@ -253,7 +253,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task MalformedBody_ParksToFaultQueue_AndAcks()
+    public async Task StartAsync_AMalformedBody_ParksToTheFaultQueueAndAcks()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake();
 
@@ -267,7 +267,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task NullBody_ParksToFaultQueue_AndAcks()
+    public async Task StartAsync_ANullBody_ParksToTheFaultQueueAndAcks()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake();
 
@@ -279,7 +279,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task MultipleDeliveries_EachAckedInOrder()
+    public async Task StartAsync_SeveralDeliveries_HandlesAndAcksEachInOrder()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake();
 
@@ -294,7 +294,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task IgnoresAggregateConsumers_AlwaysProcesses()
+    public async Task StartAsync_ACommandTargetedAtAnotherConsumer_HandlesItAnyway()
     {
         ConsumerChannelFake channel = new ConsumerChannelFake();
 
@@ -308,7 +308,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task ChannelDies_LogsTheDeath_WithoutTearingDown_AndStillStopsCleanly()
+    public async Task StartAsync_ThePeerClosesTheChannel_WarnsWithoutTearingDown()
     {
         // the broker closes the channel under the worker: visibility only — the death is logged as a
         // warning with the shutdown reason, nothing is torn down, and the worker still stops cleanly.
@@ -331,7 +331,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task ApplicationInitiatedClose_MidRun_StaysSilent_AndDoesNotResurrect()
+    public async Task StartAsync_AnApplicationCloseMidRun_StaysSilentAndDoesNotResurrect()
     {
         // the worker's own dispose of a replaced channel raises the shutdown event with the
         // Application initiator: not a death — no warning, no resurrection. Observed live: every
@@ -353,7 +353,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task ChannelClosesOnCleanStop_StaysSilent()
+    public async Task StopAsync_AChannelCloseAfterTheStop_LogsNoWarning()
     {
         // the channel's own dispose raises the shutdown event on a clean stop: not a death — the
         // worker is already stopping and logs no warning.
@@ -370,7 +370,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task ChannelDies_AndStaysClosed_ResurrectsOnANewChannel()
+    public async Task StartAsync_TheChannelDiesAndStaysClosed_ResurrectsOnANewChannel()
     {
         // a channel-level death automatic recovery never repairs (e.g. a 404/406): after the backoff
         // the worker opens a new channel from the factory, redeclares the same topology, consumes with
@@ -404,7 +404,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task DeliveryAcksOnTheChannelItArrivedOn_NotTheResurrectedField()
+    public async Task StartAsync_ADeliveryOnTheDeadChannelAfterResurrection_AcksOnThatChannel()
     {
         // the concurrency bug: a channel dies and is resurrected, swapping the worker's _channel field
         // to a fresh channel — but a delivery that arrived on the dead channel must ack on THAT channel
@@ -437,7 +437,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task BrokerCancelsTheConsumer_ChannelStillOpen_ResurrectsAnyway()
+    public async Task StartAsync_BrokerCancelsTheConsumerOnAnOpenChannel_ResurrectsAnyway()
     {
         // the broker cancelling the consumer (e.g. its queue deleted) leaves the channel OPEN but
         // deaf — the open channel proves nothing, so the resurrection must rebuild regardless.
@@ -466,7 +466,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task ChannelDies_ButRecoveryRevivesIt_DoesNotResurrect()
+    public async Task StartAsync_TheChannelDiesButRecoveryRevivesIt_DoesNotResurrect()
     {
         // a connection-level drop: the client's automatic recovery brings the SAME channel back open
         // with its consumer re-registered — the resurrection checks before acting and leaves it alone,
@@ -491,7 +491,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task ChannelDies_AfterStop_DoesNotResurrect()
+    public async Task StopAsync_AChannelCloseAfterTheStop_DoesNotResurrect()
     {
         // the shutdown event racing a stop: the worker is already stopping — no warning, and no
         // resurrection either.
@@ -512,7 +512,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task ShutdownDuringErrorHandling_LeavesTheDeliveryUnacked_WithoutNack()
+    public async Task StartAsync_ShutdownDuringErrorHandling_LeavesItUnackedWithoutNack()
     {
         // the app shuts down while the error lane runs: the cancellation is not a failure — the
         // delivery is left unacked, without nack, for the broker to requeue on channel close.
@@ -533,7 +533,7 @@ public sealed class CommandWorkerTests
     }
 
     [Fact]
-    public async Task ShutdownDuringFaultPark_LeavesTheDeliveryUnacked_WithoutNack()
+    public async Task StartAsync_ShutdownDuringAFaultPark_LeavesItUnackedWithoutNack()
     {
         // the app shuts down while the fault lane is parking a broken delivery: the cancellation is
         // not a failure — the delivery is left unacked, without nack, for the broker to requeue.

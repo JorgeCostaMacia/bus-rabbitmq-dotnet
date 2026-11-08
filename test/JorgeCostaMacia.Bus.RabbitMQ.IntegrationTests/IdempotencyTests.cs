@@ -39,7 +39,7 @@ public sealed class IdempotencyTests : IClassFixture<RabbitMqFixture>
 
     /// <summary>Duplicate deliveries of every record collapse to one effect each under an idempotent handler.</summary>
     [Fact]
-    public async Task Send_everyRecordTwice_AppliesEachEffectExactlyOnceUnderAnIdempotentHandler()
+    public async Task Send_EveryRecordTwiceToAnIdempotentHandler_AppliesEachEffectExactlyOnce()
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         IConfiguration configuration = _fixture.BuildConfiguration();

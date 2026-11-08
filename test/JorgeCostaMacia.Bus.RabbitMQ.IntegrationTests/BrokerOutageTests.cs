@@ -40,7 +40,7 @@ public sealed class BrokerOutageTests : IClassFixture<RabbitMqFixture>
     /// <summary>Every distinct record is handled even though the broker is frozen mid-drain — no record is lost across
     /// the outage.</summary>
     [Fact]
-    public async Task Send_aBatchAndFreezeTheBrokerMidDrain_RecoversAndHandlesEveryDistinctRecord()
+    public async Task Send_ABatchWithTheBrokerFrozenMidDrain_RecoversAndHandlesEveryDistinctRecord()
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         IConfiguration configuration = _fixture.BuildConfiguration();

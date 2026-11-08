@@ -18,7 +18,7 @@ public sealed class EventFaultHandlerTests
         => new FaultHandler(_producer, logger ?? NullLogger.Instance, Deliveries.Queue);
 
     [Fact]
-    public async Task ParksToFaultQueue_WithTheBodyAsText()
+    public async Task Handle_AnUnparseableBody_ParksItToTheFaultQueueAsText()
     {
         EventFaultContext context = EventFaultContext.Create(
             "not json"u8.ToArray(),
@@ -43,7 +43,7 @@ public sealed class EventFaultHandlerTests
     }
 
     [Fact]
-    public async Task ParkedBody_CarriesTheFullExceptionChain_AndTheHost()
+    public async Task Handle_ANestedExceptionWithData_ParksTheFullChainAndTheHost()
     {
         Exception failure = new InvalidCastException(
             "outer",
@@ -65,7 +65,7 @@ public sealed class EventFaultHandlerTests
     }
 
     [Fact]
-    public async Task ParkedHeaders_StampTheFailure()
+    public async Task Handle_AnUnparseableBody_StampsTheFailureOnTheParkedHeaders()
     {
         EventFaultContext context = EventFaultContext.Create(
             "not json"u8.ToArray(),
@@ -81,7 +81,7 @@ public sealed class EventFaultHandlerTests
     }
 
     [Fact]
-    public async Task ProduceFails_LeavesUnhandled()
+    public async Task Handle_ProduceFails_LeavesUnhandled()
     {
         _producer.Failure = new InvalidOperationException("broker down");
 
@@ -97,7 +97,7 @@ public sealed class EventFaultHandlerTests
     }
 
     [Fact]
-    public async Task ShutdownWhileParking_LeavesUnhandled_Silently()
+    public async Task Handle_ShutdownWhileParking_LeavesUnhandledSilently()
     {
         // a deploy cancels the token while the fault is being parked. The outcome matches a broker
         // failure — Unhandled, so the delivery is redelivered rather than acked away — but it must get
