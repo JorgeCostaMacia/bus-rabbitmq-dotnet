@@ -1,0 +1,42 @@
+# Main: on a push to main (the GitFlow finish), build and test again, then push the packages to nuget.org.
+name: Main
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: main
+
+jobs:
+  build:
+    uses: JorgeCostaMacia/github-workflows/.github/workflows/dotnet-build-nuget.yml@v1
+    with:
+      solution: bus-rabbitmq-dotnet.slnx
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # the OIDC token that nuget.org exchanges for a one-hour API key
+    steps:
+      - name: Download nuget artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: nuget
+          path: nuget
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: JorgeCostaMacia
+      # One push for every package (the shell expands the list; each .snupkg goes with its .nupkg).
+      # --skip-duplicate: a version already on nuget.org is left as it is, so a push to main that did not move the
+      # version publishes nothing.
+      - name: Push NuGet
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: dotnet nuget push nuget/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate

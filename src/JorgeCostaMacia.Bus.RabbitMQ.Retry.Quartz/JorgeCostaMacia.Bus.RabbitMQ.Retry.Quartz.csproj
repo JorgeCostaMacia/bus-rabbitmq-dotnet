@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Quartz-backed delayed retry for JorgeCostaMacia.Bus.RabbitMQ — a persistent, clustered IRetryScheduler that parks a failed delivery as a durable Quartz job and re-produces it to its exchange when the delay elapses, retrying every five minutes while the produce keeps failing and staying parked as a dead-letter when the attempts run out. Bring your own Quartz store: register the scheduler on the sending service; the worker fleet just runs Quartz against the shared store.</Description>
+		<PackageTags>bus,rabbitmq,quartz,retry,scheduling,messaging</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="JorgeCostaMacia.Bus.RabbitMQ.Retry.Quartz.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../JorgeCostaMacia.Bus.RabbitMQ/JorgeCostaMacia.Bus.RabbitMQ.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Quartz" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+	</ItemGroup>
+
+</Project>
