@@ -60,14 +60,14 @@ git checkout develop && git pull
 git checkout -b release/1.2.0
 git push -u origin release/1.2.0
 
-# ... final adjustments / version bumps ...
+# ... the version bump, and the CHANGELOG.md entry when the version asks something of consumers ...
 
 # finish
 git checkout develop && git pull
 git merge --no-ff --no-edit release/1.2.0
 git checkout main && git pull
 git merge --no-ff --no-edit release/1.2.0
-git tag -a v1.2.0 -m "Release v1.2.0"
+git tag -a v1.2.0 main --cleanup=verbatim -m "Release v1.2.0"
 git push --atomic origin main develop --tags
 git push origin --delete release/1.2.0
 git branch -d release/1.2.0
