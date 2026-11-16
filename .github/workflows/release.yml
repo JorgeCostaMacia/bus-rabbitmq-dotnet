@@ -1,10 +1,11 @@
-# Release: the GitHub Release of each v* tag the GitFlow finish pushes. Main already published the packages.
+# Release: the GitHub Release of each vX.Y.Z tag the GitFlow finish pushes, its notes the tag's section of
+# CHANGELOG.md (the shared github-release). Main already published the packages.
 name: Release
 
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*.*.*'
 
 permissions:
   contents: write
