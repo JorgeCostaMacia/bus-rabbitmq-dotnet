@@ -39,7 +39,7 @@ Third-party **and** the cross-repo `JorgeCostaMacia.*` versions are centralized 
 
 ## CI / publishing
 
-The three workflows call the reusable ones of [github-workflows](https://github.com/JorgeCostaMacia/github-workflows) (`@v1`): `develop.yml` runs `dotnet-build-nuget` on develop and PRs (the explicit-types and collection-expression greps, build, the `dotnet format` check, test, pack — no publish); `main.yml` runs the same build on a push to `main` and then pushes the `nuget` artifact to nuget.org with Trusted Publishing (`NuGet/login`, OIDC) — that job stays here because the nuget.org policy names this repo's `main.yml`; `release.yml` creates the GitHub Release of each `v*` tag. **The (central) `VersionPrefix` is the publish gate**: `--skip-duplicate` leaves an existing version alone, so only a release that moved it publishes.
+The three workflows call the reusable ones of [github-workflows](https://github.com/JorgeCostaMacia/github-workflows) (`@v1`): `develop.yml` runs `dotnet-build-nuget` on develop and PRs (the explicit-types and collection-expression greps, build, the `dotnet format` check, test, pack — no publish); `main.yml` runs the same build on a push to `main` and then pushes the `nuget` artifact to nuget.org with Trusted Publishing (`NuGet/login`, OIDC) — that job stays here because the nuget.org policy names this repo's `main.yml`; `release.yml` creates the GitHub Release of each `vX.Y.Z` tag, its notes the tag's `CHANGELOG.md` section. **The (central) `VersionPrefix` is the publish gate**: `--skip-duplicate` leaves an existing version alone, so only a release that moved it publishes.
 
 ## Branching & releases — GitFlow
 
@@ -69,7 +69,8 @@ A skill listed here but missing on this machine is one command away: `claude plu
 - **`ddd`** — domain events: the `IDomainEvent` marker crossing into the transport's `Event` is this repo's core concept.
 - **`clean-architecture`** / **`solid`** — the bus as the messaging Infrastructure/Presentation seam (consumers are driving adapters), and design review of the public surface.
 - **`gitflow`** — all branch/release work.
-- **`changelog`** — the `CHANGELOG.md` entry a release adds when it asks something of the packages' consumers (a major, a new requirement, a changed default, a renamed log message), written with the version bump.
+- **`changelog`** — the `CHANGELOG.md` entry a release adds when it asks something of the packages' consumers (a major, a new requirement, a changed default, a renamed log message), written with the version bump, one paragraph per line: the Release takes that section as its notes.
+- **`code-style-md`** — how every `.md` here is written, the package READMEs included: one paragraph per line, never wrapped by hand.
 - **`dotnet`** — C# language server + general .NET development.
 - **`dotnet-msbuild`** — `Directory.Build.props`, project-file quality, CPM.
 - **`dotnet-nuget`** — dependency management.

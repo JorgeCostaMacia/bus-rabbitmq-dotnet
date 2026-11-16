@@ -1,7 +1,6 @@
 # Contributing
 
-This repository follows a **GitFlow** branching model. The conventions below are
-the single source of truth for how branches, merges, versions and tags work here.
+This repository follows a **GitFlow** branching model. The conventions below are the single source of truth for how branches, merges, versions and tags work here.
 
 ## Branches
 
@@ -51,8 +50,7 @@ git branch -d feature/my-change-202606281530
 
 ## Releasing (release / hotfix)
 
-A release/hotfix finish is **transactional**: merge into `develop` first, then `main`,
-tag, and push atomically.
+A release/hotfix finish is **transactional**: merge into `develop` first, then `main`, tag, and push atomically.
 
 ```bash
 # start a release off develop (hotfix starts off main instead)
@@ -83,6 +81,4 @@ dotnet build -c Release
 dotnet test
 ```
 
-Shared build settings (target frameworks, package metadata, SourceLink, symbols)
-live in `Directory.Build.props` (including the single lockstep `VersionPrefix`);
-each project's `.csproj` only declares what is unique to it (`Description`, `PackageTags`).
+Shared build settings (target frameworks, package metadata, SourceLink, symbols) live in `Directory.Build.props` (including the single lockstep `VersionPrefix`); each project's `.csproj` only declares what is unique to it (`Description`, `PackageTags`).
